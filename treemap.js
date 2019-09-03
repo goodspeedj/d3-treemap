@@ -10,9 +10,7 @@ function makeTreeMap() {
   d3.json('health.json')
     .then(function(data) {
 
-      let update = (d) => {
-
-        let rootNode = d3.hierarchy(d)
+        let rootNode = d3.hierarchy(data)
 
         // sum and sort the root node values
         rootNode
@@ -32,34 +30,34 @@ function makeTreeMap() {
           .selectAll('g')
           .data(rootNode.descendants(), d => d ? d.data.name : 'root')  // not sure we need the if here
 
-          nodes = nodes
-            .enter()
-            .append('g')
-            .merge(nodes)
-            // define how many levels to show of the treemap
-            .filter(function(d) {
-              return d.depth < 3;
-            })
-            //.transition(t)
-            .attr('transform', function(d) {
-              return 'translate(' + [d.x0, d.y0] + ')'
-            })
+        nodes = nodes
+          .enter()
+          .append('g')
+          .merge(nodes)
+          // define how many levels to show of the treemap
+          .filter(function(d) {
+            return d.depth < 3;
+          })
+          //.transition(t)
+          .attr('transform', function(d) {
+            return 'translate(' + [d.x0, d.y0] + ')'
+          })
 
-          nodes
-            .append('rect')
-            .attr('width', function(d) {
-              return d.x1 - d.x0;
-            })
-            .attr('height', function(d) {
-              return d.y1 - d.y0;
-            })
-            .attr('style', function(d) {
-              return ('fill:' + d3.interpolateRdYlGn(d.data.health))
-            })
-            // drill in on click
-            .on('click', function(d) {
-              update(d.data)
-            })
+        nodes
+          .append('rect')
+          .attr('width', function(d) {
+            return d.x1 - d.x0;
+          })
+          .attr('height', function(d) {
+            return d.y1 - d.y0;
+          })
+          .attr('style', function(d) {
+            return ('fill:' + d3.interpolateRdYlGn(d.data.health))
+          })
+          // drill in on click
+          .on('click', function(d) {
+            //update(d.data)
+          })
 
           // lable the rectangles
           nodes
@@ -69,10 +67,6 @@ function makeTreeMap() {
             .text(function(d) {
               return d.data.name;
             })
-
-      };
-
-      update(data);
 
   })
 
