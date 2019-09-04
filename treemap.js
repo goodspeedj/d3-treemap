@@ -7,7 +7,7 @@ function makeTreeMap() {
     .size([width, height])
     .paddingOuter(16);
 
-    d3.json("health.json").then(function(data) {
+    d3.json("test.json").then(function(data) {
 
       let update = (d) => {
 
