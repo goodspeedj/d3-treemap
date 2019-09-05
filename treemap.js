@@ -2,17 +2,28 @@ function makeTreeMap() {
 
   let height = 800
   let width  = 1000
+  let mapDepth = 4
 
   let treemapLayout = d3.treemap()
     .size([width, height])
     .paddingOuter(16);
 
-    d3.json("test.json").then(function(data) {
+    d3.json("health.json").then(function(data) {
 
-      let update = (d) => {
+      let update = (d, name) => {
+
+        if(name) {
+          console.log('name = ' + name)
+          let oldNodes = d3.selectAll('g.rect')
+
+          oldNodes
+            .exit()
+            .remove()
+        }
 
 
         let rootNode = d3.hierarchy(d)
+        console.log(rootNode)
 
         // sum and sort the root node values
         rootNode
@@ -41,7 +52,7 @@ function makeTreeMap() {
         let newNodes = nodes
           .enter()
           .filter(function(d) {
-            return d.depth < 4;
+            return d.depth < mapDepth;
           })
           .append('g')
           .attr('transform', function(d) {
@@ -66,7 +77,17 @@ function makeTreeMap() {
         newNodes
           // drill in on click
           .on('click', function(d) {
-            update(d.data)
+            console.log(data)
+            console.log(d.data)
+            console.log(d)
+            console.log(d.depth)
+            //console.log(d.parent.data)
+            console.log(d.data.name)
+            if (d.depth === 0) {
+              update(data, d.data.name)
+            } else {
+              update(d.parent.data)
+            }
           })
 
         // lable the rectangles
@@ -86,7 +107,7 @@ function makeTreeMap() {
         nodes
           .merge(newNodes)
           .filter(function(d) {
-            return d.depth < 5;
+            return d.depth < mapDepth;
           })
           .transition()
           .duration(750)
