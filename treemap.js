@@ -18,6 +18,8 @@ function makeTreeMap() {
 
           oldNodes
             .remove()
+
+          let newRoot = d3.hierarchy(d)
         }
 
 
@@ -76,14 +78,18 @@ function makeTreeMap() {
         newNodes
           // drill in on click
           .on('click', function(d) {
-            console.log(data)
+            let copy = d.copy()
+
+            console.log(copy)
+            console.log(d.ancestors())
+
             console.log(d.data)
             console.log(d)
-            console.log(d.depth)
-            //console.log(d.parent.data)
-            console.log(d.data.name)
+
             if (d.depth === 0) {
-              update(data, d.data.name)
+              //let update = d3.hierarchy(data.)
+              console.log(d.copy)
+              update(d.data, 'GRM US') // node.copy???
             } else {
               update(d.parent.data)
             }
