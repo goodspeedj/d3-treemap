@@ -14,10 +14,9 @@ function makeTreeMap() {
 
         if(name) {
           console.log('name = ' + name)
-          let oldNodes = d3.selectAll('g.rect')
+          let oldNodes = d3.selectAll('g')
 
           oldNodes
-            .exit()
             .remove()
         }
 
