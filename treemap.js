@@ -2,7 +2,13 @@ function makeTreeMap() {
 
   let height = 800
   let width  = 1000
-  let mapDepth = 4
+  let mapDepth = 3
+  let rootNode
+  let parent
+  let grandparent
+  let ancestors = []
+
+  console.log(ancestors)
 
   let treemapLayout = d3.treemap()
     .size([width, height])
@@ -10,21 +16,44 @@ function makeTreeMap() {
 
     d3.json("health.json").then(function(data) {
 
-      let update = (d, name) => {
+      // Do a deep search on the data object by node name
+      let deepSearch = (object, name) => {
+        if (object.name === name) {
+          return object
+        }
 
-        if(name) {
-          console.log('name = ' + name)
+        let result, p
+
+        for (p in object) {
+          if (object.hasOwnProperty(p) && typeof object[p] === 'object') {
+            result = deepSearch(object[p], name)
+            if (result) {
+              return result
+            }
+          }
+        }
+        return result
+      }
+
+
+
+      let update = (d, ancestors) => {
+
+        // if name gets passed the user clicked on the top level node
+        if (ancestors && data.children !== null) {
           let oldNodes = d3.selectAll('g')
 
+          // remove all nodes and start over
           oldNodes
             .remove()
-
-          let newRoot = d3.hierarchy(d)
+          console.log('here')
+          rootNode = d3.hierarchy(ancestors[ancestors.length -1].data)
+        } else {
+          rootNode = d3.hierarchy(d)
         }
 
 
-        let rootNode = d3.hierarchy(d)
-        console.log(rootNode)
+
 
         // sum and sort the root node values
         rootNode
@@ -78,19 +107,19 @@ function makeTreeMap() {
         newNodes
           // drill in on click
           .on('click', function(d) {
-            let copy = d.copy()
-
-            console.log(copy)
-            console.log(d.ancestors())
-
-            console.log(d.data)
-            console.log(d)
 
             if (d.depth === 0) {
-              //let update = d3.hierarchy(data.)
-              console.log(d.copy)
-              update(d.data, 'GRM US') // node.copy???
+              //console.log(d)
+              update(data, ancestors)
             } else {
+              if(ancestors) {
+                console.log('here')
+                ancestors.push(d.ancestors())
+              } else {
+                ancestors = d.ancestors()
+              }
+
+              console.log(ancestors)
               update(d.parent.data)
             }
           })
