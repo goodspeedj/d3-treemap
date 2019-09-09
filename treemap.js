@@ -1,14 +1,12 @@
 function makeTreeMap() {
 
-  let height = 800
-  let width  = 1000
+  let height = 700
+  let width  = 900
   let mapDepth = 3
   let rootNode
   let parent
   let grandparent
-  let ancestors = []
-
-  console.log(ancestors)
+  let oldies = ['Liberty Mutual']
 
   let treemapLayout = d3.treemap()
     .size([width, height])
@@ -46,13 +44,12 @@ function makeTreeMap() {
           // remove all nodes and start over
           oldNodes
             .remove()
-          console.log('here')
-          rootNode = d3.hierarchy(ancestors[ancestors.length -1].data)
+
+          rootNode = d3.hierarchy(deepSearch(data, oldies[oldies.length - 2]))
+          oldies.pop()
         } else {
           rootNode = d3.hierarchy(d)
         }
-
-
 
 
         // sum and sort the root node values
@@ -107,22 +104,13 @@ function makeTreeMap() {
         newNodes
           // drill in on click
           .on('click', function(d) {
+            if(d.depth === 0) { update(data, 'dummy') }
 
-            if (d.depth === 0) {
-              //console.log(d)
-              update(data, ancestors)
-            } else {
-              if(ancestors) {
-                console.log('here')
-                ancestors.push(d.ancestors())
-              } else {
-                ancestors = d.ancestors()
-              }
+            oldies.indexOf(d.parent.data.name) === -1 ? oldies.push(d.parent.data.name) : console.log("This item already exists");
+            update(d.parent.data)
 
-              console.log(ancestors)
-              update(d.parent.data)
-            }
-          })
+            })
+
 
         // lable the rectangles
         newNodes
