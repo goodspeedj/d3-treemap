@@ -4,13 +4,15 @@ function makeTreeMap() {
   let width  = 900
   let mapDepth = 3
   let rootNode
-  let ancestors = ['Liberty Mutual']
+
 
   let treemapLayout = d3.treemap()
     .size([width, height])
     .paddingOuter(16)
 
     d3.json('test.json').then(function(data) {
+
+      let ancestors = [data.name]
 
       // Do a deep search on the data object by node name
       let deepSearch = (object, name) => {
@@ -33,10 +35,10 @@ function makeTreeMap() {
 
 
 
-      let update = (d, name) => {
+      let update = (d, topNode) => {
 
         // if name gets passed the user clicked on the top level node
-        if (name && data.children !== null) {
+        if (topNode && data.children !== null) {
           let oldNodes = d3.selectAll('g')
 
           // remove all nodes and start over
@@ -87,13 +89,15 @@ function makeTreeMap() {
 
         newNodes
           // drill in on click
-          .on('click', function(d) {
-            if(d.depth === 0) { update(data, 'dummy') }
+          .on('click', d => {
 
-            ancestors.indexOf(d.parent.data.name) === -1 ? ancestors.push(d.parent.data.name) : console.log("This item already exists");
+            if(d.depth === 0) { update(data, true) }
+
+            if(ancestors.indexOf(d.parent.data.name) === -1) { ancestors.push(d.parent.data.name) }
+
             update(d.parent.data)
 
-            })
+          })
 
 
         // lable the rectangles
