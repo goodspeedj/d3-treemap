@@ -1,13 +1,14 @@
 function makeTreeMap() {
 
-  let height = 800
-  let width  = 1000
+  let height = 700
+  let width  = 900
+  let mapDepth = 3
 
   let treemapLayout = d3.treemap()
     .size([width, height])
     .paddingOuter(16);
 
-    d3.json("test.json").then(function(data) {
+    d3.json("health.json").then(function(data) {
 
       let update = (d) => {
 
@@ -41,7 +42,7 @@ function makeTreeMap() {
         let newNodes = nodes
           .enter()
           .filter(function(d) {
-            return d.depth < 4;
+            return d.depth < mapDepth;
           })
           .append('g')
           .attr('transform', function(d) {
