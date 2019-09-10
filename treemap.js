@@ -10,7 +10,7 @@ function makeTreeMap() {
     .size([width, height])
     .paddingOuter(16)
 
-    d3.json('test.json').then(function(data) {
+    d3.json('health.json').then(function(data) {
 
       let ancestors = [data.name]
 
@@ -64,6 +64,7 @@ function makeTreeMap() {
         let nodes = d3.select('svg')
           .attr('width', width)
           .attr('height', height)
+          //.attr('viewBox', `0 0 1700 1900`)
           .selectAll('g')
           .data(rootNode.descendants(), d => d.data.name)
 
@@ -87,6 +88,7 @@ function makeTreeMap() {
           .attr('height', d => d.y1 - d.y0)
           .attr('style', d => ('fill:' + d3.interpolateRdYlGn(d.data.health)))
 
+
         newNodes
           // drill in on click
           .on('click', d => {
@@ -97,6 +99,14 @@ function makeTreeMap() {
 
             update(d.parent.data)
 
+          })
+          .on('mouseover', d => {
+            d3.select(this)
+              .attr('fill-opacity', '0.5')
+              .attr('style', 'cursor: pointer')
+          })
+          .on('mouseout', d => {
+            d3.select(this).attr('fill-opacity', '1')
           })
 
 
